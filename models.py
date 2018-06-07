@@ -98,7 +98,7 @@ def add_photo_to_album(url, album, filename):
 
     blobstore_filename = '/gs{}'.format(url)
     blob_key = blobstore.create_gs_key(blobstore_filename)
-    url = images.get_serving_url(blob_key)
+    url = images.get_serving_url(blob_key, secure_url=True)
     img = Image(url=url, album=get_album(album).key, blobstore_key=blob_key, filename=filename)
     img.put()
     return img
