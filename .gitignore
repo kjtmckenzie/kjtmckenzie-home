@@ -1,0 +1,7 @@
+*.pyc
+lib/*
+lib
+*.json
+*.DS_Store
+.idea/*
+flask_secret.txt

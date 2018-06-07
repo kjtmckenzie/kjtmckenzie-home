@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Marketing Icons Section -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">
+                    Photography
+                </h1>
+            </div>
+		</div>
+
+        <!-- Portfolio Section -->
+        <div class="row">
+            {% if context.albums is not none %}
+                {% for album in context.albums %}
+                <div class="col-md-4 col-sm-6" style="height:300px;">
+                    <a href="{{album['urlsafe']}}">
+                        <img class="img-responsive img-hover" src="{{album['cover'].url}}=s1024" alt="">
+                    </a>
+                    <div class="text-center small-gray">{{album['album'].title}}</div>
+                </div>
+
+                {% endfor %}
+            {% else %}
+                No album
+            {% endif %}
+
+        </div>
+
+
+
+{% endblock %}
