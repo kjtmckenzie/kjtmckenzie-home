@@ -5,13 +5,6 @@
 
 from storage import base_url
 import os
-import logging
-
-from apiclient.discovery import build
-
-import httplib2
-import oauth2client
-from oauth2client import client
 
 BASE_URL = base_url()
 WEB_CLIENT_ID = os.getenv('WEB_CLIENT_ID')
