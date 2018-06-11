@@ -12,7 +12,7 @@ from flask import (
     request
 )
 
-from storage import upload_file_to_gcs
+import storage
 from google.appengine.api import users
 
 import flask
@@ -23,8 +23,8 @@ from settings import init
 app = Flask(__name__)
 init(app)
 
-
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -35,7 +35,7 @@ def upload_file(file, album):
     if album == "covers":
         folder = "covers"
     if allowed_file(file.filename):
-        saved_file_name = upload_file_to_gcs(file, folder)
+        saved_file_name = storage.upload_file_to_gcs(file, folder)
         img = models.add_photo_to_album(url=saved_file_name, album=album, filename=file.filename)
         flash('Uploaded photo to album %s' % album)
     else:
