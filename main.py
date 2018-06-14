@@ -4,7 +4,7 @@
 # consent from Kevin McKenzie.
 
 import logging
-import models
+from models import Album, CoverImage
 
 from flask import (
     Flask,
@@ -21,27 +21,21 @@ init(app)
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
-    albums = models.get_active_albums()
+    albums = Album.active_albums()
 
     album_list = []
 
     for album in albums:
         album_dict = {}
         album_dict["album"] = album
-        album_dict["cover"] = models.get_cover_image(album.title)
-        album_dict["images"] = models.get_album_photos(album.title)
+        album_dict["cover"] = CoverImage.get(album.title)
+        album_dict["images"] = Album.photos(album.title)
 
         album_list.append(album_dict)
-
-        logging.info("album list")
-        logging.info(str(album_list))
 
     context = {
         'albums' : album_list
     }
-
-    logging.info("context")
-    logging.info(str(context))
 
     return render_template('index.html', context=context)
 

@@ -5,7 +5,7 @@
 
 import logging
 import models
-from google.appengine.ext import ndb
+from models import Album, CoverImage
 
 from flask import (
     Flask,
@@ -23,39 +23,28 @@ init(app)
 @app.route('/photography/<path:path>')
 def index(path):
 
-    logging.info("Path is %s" % str(path))
-
     if len(path) > 0:
-        logging.info("path: %s" % path)
-        album = models.get_album_by_urlsafe(path)
-        logging.info("album: %s" % str(album))
-        logging.info("album.title: %s" % str(album.title))
-        photos = models.get_album_photos(album.title)
-        logging.info("photos: %s" % str(photos))
+        album = Album.get(path)
+        photos = Album.photos(album.title)
         context = {
             'album': album,
             'photos': photos
         }
-        logging.info("returning with path")
-        logging.info(str(context))
 
         return render_template('album.html', context=context)
 
-    albums = models.get_active_albums()
+    albums = Album.active_albums()
 
     album_list = []
 
     for album in albums:
         album_dict = {}
         album_dict["album"] = album
-        album_dict["cover"] = models.get_cover_image(album.title)
-        album_dict["images"] = models.get_album_photos(album.title)
+        album_dict["cover"] = CoverImage.get(album.title)
+        album_dict["images"] = Album.photos(album.title)
         album_dict["urlsafe"] = album.key.urlsafe()
 
         album_list.append(album_dict)
-
-        logging.info("album list")
-        logging.info(str(album_list))
 
     context = {
         'albums' : album_list

@@ -13,11 +13,10 @@ from flask import (
 )
 
 import storage
-from google.appengine.api import users
 
 import flask
 
-import models
+from models import Image, Album, CoverImage
 from settings import init
 
 app = Flask(__name__)
@@ -36,7 +35,7 @@ def upload_file(file, album):
         folder = "covers"
     if allowed_file(file.filename):
         saved_file_name = storage.upload_file_to_gcs(file, folder)
-        img = models.add_photo_to_album(url=saved_file_name, album=album, filename=file.filename)
+        img = Image.new(url=saved_file_name, album=album, filename=file.filename)
         flash('Uploaded photo to album %s' % album)
     else:
         flash('File extension not supported')
@@ -46,19 +45,29 @@ def upload_file(file, album):
 
 @app.route('/admin/', methods=['POST', 'GET'])
 def admin():
-
-    user = models.get_user(users.get_current_user().email())
+    '''
+    user = models.User.get(users.get_current_user().email())
 
     if user is not None and not user.admin:
         return 'Only admins can access this site', 401
+    '''
 
-    albums = models.get_active_albums()
+
+
+    albums = Album.active_albums()
 
     if albums is None or len(albums) < 1:
         albums = []
 
+    '''
     context = {
         'user_email': user.email,
+        'albums': albums
+    }
+    '''
+
+    context = {
+        'user_email': "local",
         'albums': albums
     }
 
@@ -68,7 +77,7 @@ def admin():
                 album = request.form['album']
                 location = request.form['location']
                 if len(album) > 1:
-                    new_album = models.create_album(album, location)
+                    new_album = Album.new(album, location)
                     context['albums'] = context['albums'] + [new_album]
                     flash('New album %s created' % album)
             except Exception as e:
@@ -80,7 +89,7 @@ def admin():
                 for file in uploaded_files:
                     if 'cover_image' in request.form:
                         img = upload_file(file, "covers")
-                        models.set_cover_image(img, request.form['album'])
+                        CoverImage.new(img, request.form['album'])
                     else:
                         upload_file(file, request.form['album'])
 
