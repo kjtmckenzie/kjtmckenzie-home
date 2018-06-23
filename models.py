@@ -178,9 +178,12 @@ class CoverImage(GenericModel):
     def get(cls, album_id):
         '''Return the cover image for an album'''
         # get the cover image record and if it exists, query for the image
+        logging.info("Getting album ID: %s" % album_id)
         coverImage = GenericModel.get(Album.get(album_id).key,
                                       cls,
                                       ndb_attr=cls.album)
+        if coverImage == None:
+            return None
         return GenericModel.get(coverImage.cover_image, Image)
 
 
