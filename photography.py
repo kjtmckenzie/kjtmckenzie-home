@@ -10,7 +10,8 @@ from models import Album, CoverImage
 from flask import (
     Flask,
     render_template,
-    flash
+    flash,
+    redirect
 )
 
 import flask
@@ -25,6 +26,8 @@ def index(path):
 
     if len(path) > 0:
         album = Album.get(path)
+        if album is None:
+            return redirect("./")
         photos = Album.photos(album.title)
         context = {
             'album': album,
