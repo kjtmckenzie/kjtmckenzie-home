@@ -12,11 +12,11 @@ from flask import (
     request
 )
 
+from google.appengine.api import users
 import storage
-
 import flask
 
-from models import Image, Album, CoverImage
+from models import Image, Album, CoverImage, User
 from settings import init
 
 app = Flask(__name__)
@@ -45,7 +45,7 @@ def upload_file(file, album):
 
 @app.route('/admin/', methods=['POST', 'GET'])
 def admin():
-    user = models.User.get(users.get_current_user().email())
+    user = User.get(users.get_current_user().email())
 
     if user is not None and not user.admin:
         return 'Only admins can access this site', 401

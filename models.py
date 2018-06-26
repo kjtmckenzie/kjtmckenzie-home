@@ -43,7 +43,7 @@ class User(GenericModel):
     def get(cls, user_id):
         '''Returns a user profile by email from the datastore'''
 
-        user = GenericModel.get(user_id, User)
+        user = GenericModel.get(user_id, User, ndb_attr=cls.email)
         if user is None and isinstance(user_id, six.string_types):
             return cls.query(cls.email == user_id).get()
         return user
