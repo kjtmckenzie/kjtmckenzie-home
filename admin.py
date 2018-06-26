@@ -45,29 +45,18 @@ def upload_file(file, album):
 
 @app.route('/admin/', methods=['POST', 'GET'])
 def admin():
-    '''
     user = models.User.get(users.get_current_user().email())
 
     if user is not None and not user.admin:
         return 'Only admins can access this site', 401
-    '''
-
-
 
     albums = Album.active_albums()
 
     if albums is None or len(albums) < 1:
         albums = []
 
-    '''
     context = {
         'user_email': user.email,
-        'albums': albums
-    }
-    '''
-
-    context = {
-        'user_email': "local",
         'albums': albums
     }
 
