@@ -45,9 +45,12 @@ def upload_file(file, album):
 
 @app.route('/admin/', methods=['POST', 'GET'])
 def admin():
+    
+    logging.info("user is %s" % str(users.get_current_user().email()))
+    
     user = User.get(users.get_current_user().email())
 
-    if user is not None and not user.admin:
+    if not app.debug and (user is None or not user.admin):
         return 'Only admins can access this site', 401
 
     albums = Album.active_albums()
@@ -56,7 +59,6 @@ def admin():
         albums = []
 
     context = {
-        'user_email': user.email,
         'albums': albums
     }
 
