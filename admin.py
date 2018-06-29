@@ -45,9 +45,6 @@ def upload_file(file, album):
 
 @app.route('/admin/', methods=['POST', 'GET'])
 def admin():
-    
-    logging.info("user is %s" % str(users.get_current_user().email()))
-    
     user = User.get(users.get_current_user().email())
 
     if not app.debug and (user is None or not user.admin):
