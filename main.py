@@ -26,12 +26,15 @@ def index(path):
     album_list = []
 
     for album in albums:
-        album_dict = {}
-        album_dict["album"] = album
-        album_dict["cover"] = CoverImage.get(album.title)
-        album_dict["images"] = Album.photos(album.title)
-
-        album_list.append(album_dict)
+        try:
+            album_dict = {
+                "album": album,
+                "cover": CoverImage.get(album.title),
+                "images": Album.photos(album.title)
+            }
+            album_list.append(album_dict)
+        except:
+            logging.info("Invalid album: %s" % str(album))
 
     context = {
         'albums' : album_list
