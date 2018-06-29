@@ -60,6 +60,8 @@ class User(GenericModel):
         Returns:
             The new user
         """
+        if email is None:
+            raise Exception("Could not create user because not all fields present")
         if cls.get(email) is not None:
             logging.info("create_user failed.  User already exists: %s" % email)
             raise Exception("User already exists: %s" % email)
@@ -90,7 +92,7 @@ class Album(GenericModel):
         album = GenericModel.get(album_id, cls, ndb_attr=cls.title)
         # create the covers album if it hasn't already been created
         if album is None and album_id == "covers":
-            album = Album(title=album, location="None")
+            album = Album(title=album_id, location="None")
             logging.info("Creating the covers album for the first time")
             album.put()
         return album
@@ -120,6 +122,8 @@ class Album(GenericModel):
     @classmethod
     def new(cls, title, location):
         '''Creates a new album with title and location'''
+        if title is None or location is None:
+            raise Exception("Could not create album because not all fields present")
         if cls.get(title) is not None:
             logging.info("create_album failed.  Album already exists: %s" % title)
             raise Exception("Album already exists: %s" % title)
@@ -153,6 +157,14 @@ class Image(GenericModel):
         Returns:
             The image that was saved.
         """
+        album = Album.get(album)
+        
+        if album is None:
+            raise Exception("Album %s does not exist" % str(album))
+            
+        if url is None or filename is None:
+            raise Exception("Could not create album because not all fields present")
+        
         blobstore_filename = '/gs{}'.format(url)
         blob_key = blobstore.create_gs_key(blobstore_filename)
 
@@ -161,7 +173,7 @@ class Image(GenericModel):
 
         # record the image in the database
         img = Image(url=url,
-                    album=Album.get(album).key,
+                    album=album.key,
                     blobstore_key=blob_key,
                     filename=filename)
         img.put()
@@ -178,7 +190,6 @@ class CoverImage(GenericModel):
     def get(cls, album_id):
         '''Return the cover image for an album'''
         # get the cover image record and if it exists, query for the image
-        logging.info("Getting album ID: %s" % album_id)
         coverImage = GenericModel.get(Album.get(album_id).key,
                                       cls,
                                       ndb_attr=cls.album)
@@ -192,6 +203,13 @@ class CoverImage(GenericModel):
         '''Set the cover image of an album'''
         album = Album.get(album_id)
         image = Image.get(image_id)
+        
+        if album is None:
+            raise Exception("Album %s does not exist" % str(album))
+        
+        if image is None:
+            raise Exception("Image %s does not exist" % str(image))  
+            
         cover_image = cls.get(album_id)
 
         # first check to see if the cover image record already exists
