@@ -2,100 +2,91 @@
 
 {% block content %}
 
-    <!-- Page Content -->
-    <div class="container">
+<!-- Marketing Icons Section -->
+<div class="row">
+    <h1 class="page-header">
+        Kevin McKenzie
+    </h1>
+</div>
 
-        <!-- Marketing Icons Section -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h1 class="page-header">
-                    Kevin McKenzie
-                </h1>
-            </div>
-		</div>
-		
-        <!-- Portfolio Section -->
-        <div class="row">
-            <div class="col-lg-12">
-                <h2 class="page-header">Photography</h2>
-            </div>
+<!-- Portfolio Section -->
+<div class="row">
+    <h2 class="page-header">Photography</h2>
 
-            {% if context.albums is not none %}
-                {% for album in context.albums %}
-                <div class="col-md-4 col-sm-6" style="height:300px;">
-                    <a href="photography/{{album['album'].key.urlsafe()}}">
-                        <img class="img-responsive img-hover" src="{{album['cover'].url}}" alt="">
-                    </a>
-                    <div class="text-center small-gray">{{album['album'].title}}</div>
-                </div>
-
-                {% endfor %}
-            {% else %}
-                No album
-            {% endif %}
-
+    {% if context.albums is not none %}
+        {% for album in context.albums %}
+        <div class="col-md-4 col-sm-6" style="height:300px;">
+            <a href="photography/{{album['album'].key.urlsafe()}}">
+                <img class="img-responsive img-hover" src="{{album['cover'].url}}" alt="">
+            </a>
+            <div class="text-center small-gray">{{album['album'].title}}</div>
         </div>
-		
-        <div class="row" id="projects">
-            <div class="col-lg-12">
-                <h2 class="page-header">Projects</h2>
+
+        {% endfor %}
+    {% else %}
+        No album
+    {% endif %}
+</div>
+
+<div class="row" id="projects">
+    <h2 class="page-header">Projects</h2>
+
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Ars Beta</h4>
             </div>
-            <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4>Ars</h4>
-                    </div>
-                    <div class="panel-body" style="height:145px;">
-                        <p>Photography rating and sharing service.  I wrote the entire backend, API, and the web frontend.  Currently in open beta.</p>
-                        <a href="https://beta-ars.appspot.com/" class="btn btn-default">Learn More</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4>Mosh Network Simulator</h4>
-                    </div>
-                    <div class="panel-body" style="height:145px;">
-                        <p>Validate the response-time measurements of the <a href="https://mosh.org/">MOSH</a> terminal developed by Keith Winstein at MIT.</p>
-                        <a href="https://github.com/kjtmckenzie/mosh_test" class="btn btn-default">Learn More</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4>Fault Injector</h4>
-                    </div>
-                    <div class="panel-body" style="height:145px;">
-                        <p>Inject standard OS faults into Linux programs to test error handling routines.</p>
-                        <a href="https://github.com/kjtmckenzie/cs240-lab3" class="btn btn-default">Learn More</a>
-                    </div>
-                </div>
+            <div class="panel-body" style="height:145px;">
+                <p>Photography rating and sharing service.  I wrote the entire backend, API, and the web frontend.  Currently in open beta.</p>
+                <a href="https://arsbeta.com/" class="btn btn-default">Learn More</a>
             </div>
         </div>
-        <!-- /.row -->
-
-
-        <!-- /.row -->
-
-        <!-- Features Section -->
-        <div class="row" id="about">
-            <div class="col-lg-12">
-                <h2 class="page-header">About Me</h2>
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Mosh Network Simulator</h4>
             </div>
-            <div class="col-md-6">
-                <img class="img-responsive" src="/static/pictures/me.jpeg" alt="">
-            </div>
-            <div class="col-md-6">
-                <p>I am a technology consultant for Deloitte Consulting.  I received a Masters in Computer Science from Stanford University in 2016.  I have a passion for photography and all things outdoors.  </p>
-                <p><a href="/static/documents/kmckenzie_resume.pdf">Resume</a></p>
-				<p><a href="https://www.linkedin.com/in/kpmckenzie">LinkedIn</a></p>
-                <p><a href="https://www.credential.net/6pe357iu?key=201db570836aa37960563c5e4d331bd3d703e71ea798062e21d831b8cf1d1c62">GCP Certification - Professional Cloud Architect</a></p>
+            <div class="panel-body" style="height:145px;">
+                <p>Validate the response-time measurements of the <a href="https://mosh.org/">MOSH</a> terminal developed by Keith Winstein at MIT.</p>
+                <a href="https://github.com/kjtmckenzie/mosh_test" class="btn btn-default">Learn More</a>
             </div>
         </div>
-        <!-- /.row -->
+    </div>
+    <div class="col-md-4">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Fault Injector</h4>
+            </div>
+            <div class="panel-body" style="height:145px;">
+                <p>Inject standard OS faults into Linux programs to test error handling routines.</p>
+                <a href="https://github.com/kjtmckenzie/cs240-lab3" class="btn btn-default">Learn More</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
 
-        <hr>
+
+<!-- /.row -->
+
+<!-- Features Section -->
+<div class="row" id="about">
+    <h2 class="page-header">About Me</h2>
+
+    <div class="col-md-6">
+        <img class="img-responsive" src="/static/pictures/me.jpeg" alt="">
+    </div>
+    <div class="col-md-6">
+        <p>I am a technology consultant for Deloitte Consulting.  I received a Masters in Computer Science from Stanford University in 2016.  I have a passion for photography and all things outdoors.  </p>
+        <p><a href="/static/documents/kmckenzie_resume.pdf">Resume</a></p>
+        <p><a href="https://www.linkedin.com/in/kpmckenzie">LinkedIn</a></p>
+        <p><a href="https://www.credential.net/6pe357iu?key=201db570836aa37960563c5e4d331bd3d703e71ea798062e21d831b8cf1d1c62">GCP Certification - Professional Cloud Architect</a></p>
+    </div>
+</div>
+<!-- /.row -->
+
+<hr>
+
 
 {% endblock %}

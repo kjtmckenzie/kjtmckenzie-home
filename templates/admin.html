@@ -2,77 +2,65 @@
 
 {% block content %}
 
-    <div class="container">
-
-        <!-- Features Section -->
+<!-- Features Section -->
+<div class="row">
+    <h2 class="page-header">Create Album</h2>
+    <form action="./" method="post" enctype="multipart/form-data">
         <div class="row">
-            <div class="col-lg-12">
-                <h2 class="page-header">Create Album</h2>
-            </div>
-            <div class="col-md-12">
-                <form action="./" method="post" enctype="multipart/form-data">
-                    <div class="row">
-                        <div class="col-md-8">
-                            Album Name
-                            <input class="form-control" class="col-md-6" id="album" name="album" type="text"/>
-                        </div>
-                        <div class="col-md-8">
-                            Album Location
-                            <input class="form-control" class="col-md-6" id="location" name="location" type="text"/>
-                        </div>
-                    </div>
-                    <br>
-                    <input type="submit" class="btn btn-primary btn-md" value="Create Album" id="create-album" name="create-album">
-                </form>
+            <div class="col-md-6">
+                Album Name
+                <input class="form-control" id="album" name="album" type="text"/>
             </div>
         </div>
-
-
-        <!-- Features Section -->
+        <br>
         <div class="row">
-            <div class="col-lg-12">
-                <h2 class="page-header">Add Photo to Album</h2>
-            </div>
-            <div class="col-md-12">
-                <form action="./" method="post" enctype="multipart/form-data">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <input type="file" name="file" id="file" class="form-control" placeholder="Image to Upload" multiple>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <select name="album" placeholder="Album" class="form-control">
-                                    <option value="0">Album</option>
-                                {% for album in context.albums %}
-                                <option value="{{album.title}}">{{ album.title }}</option>
-                                {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <div class="checkbox">
-                                    <label class="checkbox">
-                                        <input name="cover_image" type="checkbox" value="cover_image"/>
-                                            Cover Image
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <input type="submit" class="btn btn-primary btn-md" value="Upload Photo" id="upload-image" name="upload-image">
-                </form>
+            <div class="col-md-6">
+                Album Location
+                <input class="form-control" id="location" name="location" type="text"/>
             </div>
         </div>
+        <br>
+        <input type="submit" class="btn btn-primary btn-md" value="Create Album" id="create-album" name="create-album">
+    </form>
+</div>
 
 
-    </div>
+<!-- Features Section -->
+<div class="row">
+    <h2 class="page-header">Add Photo to Album</h2>
+    <form action="./" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="file" name="file" id="file" class="form-control" placeholder="Image to Upload" multiple>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-6">
+                    <select name="album" placeholder="Album" class="form-control">
+                        <option value="0">Album</option>
+                        {% for album in context.albums %}
+                            <option value="{{album.title}}">{{ album.title }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="checkbox">
+                        <label class="checkbox">
+                            <input name="cover_image" type="checkbox" value="cover_image"/>
+                            Cover Image
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <input type="submit" class="btn btn-primary btn-md" value="Upload Photo" id="upload-image" name="upload-image">
+        </div>
+    </form>
+</div>
+
 
 {% endblock %}
