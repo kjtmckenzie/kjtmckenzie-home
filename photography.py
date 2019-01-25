@@ -43,7 +43,7 @@ def index(path):
     for album in albums:
         album_dict = {
             "album": album,
-            "cover": CoverImage.get(album.title)
+            "cover_url": album.cover_image_url_cache
         }
         album_list.append(album_dict)
     context = {
