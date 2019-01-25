@@ -29,7 +29,7 @@ def index(path):
         try:
             album_dict = {
                 "album": album,
-                "cover": CoverImage.get(album.title)
+                "cover_url": album.cover_image_url_cache
             }
             album_list.append(album_dict)
         except:

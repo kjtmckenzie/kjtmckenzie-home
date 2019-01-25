@@ -84,6 +84,7 @@ class Album(GenericModel):
     title = ndb.StringProperty()
     active = ndb.BooleanProperty(default=True)
     location = ndb.StringProperty()
+    cover_image_url_cache = ndb.StringProperty()
 
     @classmethod
     def get(cls, album_id):
@@ -221,5 +222,9 @@ class CoverImage(GenericModel):
             cover_image = CoverImage(album=album.key, cover_image=image.key)
 
         cover_image.put()
+
+        album.cover_image_url_cache = image.url
+        album.put()
+
         logging.info("Cover image %s saved to album %s" % (image.filename, album.title))
         return cover_image
