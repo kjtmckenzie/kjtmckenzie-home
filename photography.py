@@ -41,13 +41,11 @@ def index(path):
     album_list = []
 
     for album in albums:
-        album_dict = {}
-        album_dict["album"] = album
-        album_dict["cover"] = CoverImage.get(album.title)
-        album_dict["urlsafe"] = album.key.urlsafe()
-
+        album_dict = {
+            "album": album,
+            "cover": CoverImage.get(album.title)
+        }
         album_list.append(album_dict)
-
     context = {
         'albums' : album_list
     }
