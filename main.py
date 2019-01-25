@@ -29,8 +29,7 @@ def index(path):
         try:
             album_dict = {
                 "album": album,
-                "cover": CoverImage.get(album.title),
-                "images": Album.photos(album.title)
+                "cover": CoverImage.get(album.title)
             }
             album_list.append(album_dict)
         except:

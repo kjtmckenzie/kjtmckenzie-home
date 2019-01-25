@@ -44,7 +44,6 @@ def index(path):
         album_dict = {}
         album_dict["album"] = album
         album_dict["cover"] = CoverImage.get(album.title)
-        album_dict["images"] = Album.photos(album.title)
         album_dict["urlsafe"] = album.key.urlsafe()
 
         album_list.append(album_dict)
