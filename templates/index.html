@@ -11,7 +11,7 @@
         {% for album in context.albums %}
         <div class="col-md-4" style="height:320px; max-width: 420px; min-width: 325px">
             <a href="photography/{{album['album'].key.urlsafe()}}">
-                <img class="img-responsive img-hover" src="{{album['cover_url']}}" alt="">
+                <img class="img-responsive img-hover" src="{{album['cover_url']}}=s1024" alt="">
             </a>
             <div class="text-center small-gray">{{album['album'].title}}</div>
         </div>
