@@ -37,12 +37,6 @@
 	    <!-- Bootstrap Core JavaScript -->
 	    <script src="/js/bootstrap.min.js"></script>
 
-	    <!-- Script to Activate the Carousel -->
-	    <script>
-	    $('.carousel').carousel({
-	        interval: 5000 //changes the speed
-	    })
-	    </script>
 		
 		{% block meta %} {% endblock %}
 
@@ -54,7 +48,7 @@
 		
 	    <!-- Navigation -->
 	    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-	        <div class="container">
+	        <div class="container"  style="max-width: 1440px; margin:0 auto;">
 	            <!-- Brand and toggle get grouped for better mobile display -->
 	            <div class="navbar-header">
 	                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -85,7 +79,7 @@
 	    </nav>
 
 
-		<div id="content">
+		<div id="content" style="max-width: 2000px; margin:0 auto;">
 			{% with messages = get_flashed_messages() %}
 				{% if messages %}
 					{% for message in messages %}
@@ -107,7 +101,7 @@
 	
     <!-- Footer -->
     <footer>
-        <div class="row">
+        <div class="row" style="max-width: 1440px; margin:0 auto;">
             <div class="col-lg-8 col-centered">
                 <p>Copyright &copy; Kevin McKenzie 2018</p>
             </div>
