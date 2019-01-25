@@ -29,6 +29,11 @@ body {
     color:gray;
 }
 
+.row {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
 /* Home Page Carousel */
 
 header.carousel {
@@ -123,4 +128,12 @@ footer {
   -moz-transform: scale(0.99);
   -ms-transform: scale(0.99);
   -o-transform: scale(0.99);
+}
+
+#content {
+    max-width: 1550px;
+}
+
+.navbar-holder {
+    max-width: 1550px;
 }

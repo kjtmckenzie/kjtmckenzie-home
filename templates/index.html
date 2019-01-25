@@ -2,12 +2,6 @@
 
 {% block content %}
 
-<!-- Marketing Icons Section -->
-<div class="row">
-    <h1 class="page-header">
-        Kevin McKenzie
-    </h1>
-</div>
 
 <!-- Portfolio Section -->
 <div class="row">
@@ -15,7 +9,7 @@
 
     {% if context.albums is not none %}
         {% for album in context.albums %}
-        <div class="col-md-4 col-sm-6" style="height:320px; max-width: 420px; min-width: 340px">
+        <div class="col-md-4" style="height:320px; max-width: 420px; min-width: 325px">
             <a href="photography/{{album['album'].key.urlsafe()}}">
                 <img class="img-responsive img-hover" src="{{album['cover'].url}}" alt="">
             </a>
