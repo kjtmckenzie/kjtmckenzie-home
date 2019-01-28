@@ -137,3 +137,7 @@ footer {
 .navbar-holder {
     max-width: 1550px;
 }
+
+.navbar-brand {
+    padding-left: 0px;
+}
