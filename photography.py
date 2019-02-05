@@ -50,9 +50,6 @@ def index(path):
         'albums' : album_list
     }
 
-    logging.info("context")
-    logging.info(str(context))
-
     return render_template('photography.html', context=context)
 
 

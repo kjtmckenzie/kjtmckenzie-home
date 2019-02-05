@@ -3,10 +3,8 @@
 # Code may not be copied, reused,  or modified in any way without written
 # consent from Kevin McKenzie.
 
-from storage import base_url
 import os
 
-BASE_URL = base_url()
 WEB_CLIENT_ID = os.getenv('WEB_CLIENT_ID')
 IS_APP_ENGINE_ENV = os.getenv('SERVER_SOFTWARE') and os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')
 

@@ -1,13 +1,11 @@
-from google.appengine.ext import ndb
-from google.appengine.api import images
-from google.appengine.ext import blobstore
+from anom import Model, props
 import logging
 import six
 
 
-class GenericModel(ndb.Model):
+class GenericModel(Model):
     '''A generic ndb model that will hold common properties and methods.'''
-    created_on = ndb.DateTimeProperty(auto_now_add=True, indexed=True)
+    created_on = props.DateTime(auto_now_add=True, indexed=True)
 
     @classmethod
     def get(cls, identifier, ndb_class, ndb_attr=None):
@@ -18,7 +16,7 @@ class GenericModel(ndb.Model):
 
         if (type(identifier) is ndb_class):
             return identifier
-        if (type(identifier) is ndb.Key):
+        if (type(identifier) is props.Key):
             if (str(identifier.kind()) + "<") in str(ndb_class):
                 return identifier.get()
             return ndb_class.query(ndb_attr == identifier).get()
@@ -35,8 +33,8 @@ class GenericModel(ndb.Model):
 
 class User(GenericModel):
     '''Models an individual user'''
-    email = ndb.StringProperty()
-    admin = ndb.BooleanProperty(indexed=False, default=False)
+    email = props.String()
+    admin = props.Bool(indexed=False, default=False)
 
 
     @classmethod
@@ -81,9 +79,9 @@ class User(GenericModel):
 
 class Album(GenericModel):
     '''Models an individual album of images'''
-    title = ndb.StringProperty()
-    active = ndb.BooleanProperty(default=True)
-    location = ndb.StringProperty()
+    title = props.String()
+    active = props.Bool(default=True, indexed=True)
+    location = props.String()
 
     @classmethod
     def get(cls, album_id):
@@ -111,7 +109,7 @@ class Album(GenericModel):
     @classmethod
     def active_albums(cls, return_covers=False):
         '''Returns all active albums.'''
-        albums = cls.query(cls.active == True)
+        albums = cls.query().where(cls.active.is_true)
 
         # don't return the covers album unless specifically requested
         if not return_covers:
@@ -135,10 +133,10 @@ class Album(GenericModel):
 
 class Image(GenericModel):
     '''Models an individual image'''
-    album = ndb.KeyProperty(kind=Album)
-    url = ndb.StringProperty()
-    blobstore_key = ndb.BlobProperty()
-    filename = ndb.StringProperty(indexed=True)
+    album = props.Key(kind=Album)
+    url = props.String()
+    #blobstore_key = ndb.BlobProperty()
+    filename = props.String(indexed=True)
 
     @classmethod
     def get(cls, image_id):
@@ -165,16 +163,15 @@ class Image(GenericModel):
         if url is None or filename is None:
             raise Exception("Could not create album because not all fields present")
         
-        blobstore_filename = '/gs{}'.format(url)
-        blob_key = blobstore.create_gs_key(blobstore_filename)
+        #blobstore_filename = '/gs{}'.format(url)
+        #blob_key = blobstore.create_gs_key(blobstore_filename)
 
         # serving URLs are for the images API and they allow dynamic scaling
-        url = images.get_serving_url(blob_key, secure_url=True)
+        #url = images.get_serving_url(blob_key, secure_url=True)
 
         # record the image in the database
-        img = Image(url=url,
+        img = Image(url=None,
                     album=album.key,
-                    blobstore_key=blob_key,
                     filename=filename)
         img.put()
         logging.info("Image %s uploaded to album %s" % (filename, album))
@@ -183,8 +180,8 @@ class Image(GenericModel):
 
 class CoverImage(GenericModel):
     '''Models the record of album cover images'''
-    album = ndb.KeyProperty(kind=Album)
-    cover_image = ndb.KeyProperty(kind=Image)
+    album = props.Key(kind=Album)
+    cover_image = props.Key(kind=Image)
 
     @classmethod
     def get(cls, album_id):
