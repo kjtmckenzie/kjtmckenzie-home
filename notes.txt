@@ -1,3 +1,16 @@
 virtualenv -p python3 env
 source env/bin/activate
 pip install -r requirements.txt
+
+
+
+
+gcloud beta emulators firestore start
+export FIRESTORE_EMULATOR_HOST=::1:8182
+export DATASTORE_EMULATOR_HOST=localhost:8081
+
+
+
+This works
+export GOOGLE_APPLICATION_CREDENTIALS=kjtmckenzie-home-fs-e95cb6b832bf.json
+python main.py

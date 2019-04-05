@@ -4,19 +4,24 @@
 # consent from Kevin McKenzie.
 
 import os
+from google.cloud import firestore
 
-WEB_CLIENT_ID = os.getenv('WEB_CLIENT_ID')
-IS_APP_ENGINE_ENV = os.getenv('SERVER_SOFTWARE') and os.getenv('SERVER_SOFTWARE').startswith('Google App Engine/')
+PROJECT = "kjtmckenzie-home-fs"
+
+UPLOAD_BUCKET = 'gs://' + PROJECT
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 def init(app):
-    app.debug = not IS_APP_ENGINE_ENV
     app.secret_key = open("flask_secret.txt", 'rb').read()
+    app.config['db'] = firestore.Client(project=PROJECT)
 
+    if os.getenv('GAE_ENV', '').startswith('standard'):
+        app.config['IS_DEV'] = False
+        app.debug = False
+        app.config['UPLOAD_FOLDER'] = UPLOAD_BUCKET
+    else:
+        app.config['IS_DEV'] = True
+        app.debug = True
+        app.config['UPLOAD_FOLDER'] = ""  # just post to /images/
 
-
-
-
-
-
-
-
+       
