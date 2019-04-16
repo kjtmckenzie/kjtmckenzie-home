@@ -12,5 +12,19 @@ export DATASTORE_EMULATOR_HOST=localhost:8081
 
 
 This works
+cd ~/personal/kjtmckenzie-home/
+source env/bin/activate
 export GOOGLE_APPLICATION_CREDENTIALS=kjtmckenzie-home-fs-e95cb6b832bf.json
 python main.py
+
+cd ~/personal/kjtmckenzie-home/; source env/bin/activate; export GOOGLE_APPLICATION_CREDENTIALS=kjtmckenzie-home-fs-e95cb6b832bf.json; python main.py
+
+
+
+#TODO
+Get authentication to work on admin page
+Remove dependence on service account
+Split the pages into separate python files
+Add logging
+Convert to containers?
+Image resizing cloud function?

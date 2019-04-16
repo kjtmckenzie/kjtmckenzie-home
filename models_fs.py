@@ -23,9 +23,7 @@ class GenericModel(object):
         repr_str = repr_str[:-2] + ")"
 
         return repr_str
-
-
-
+        
 
 # how do we prevent duplicate users from being created?
 class User(GenericModel):
@@ -129,11 +127,27 @@ class Album(GenericModel):
     def put(self):
         model_methods.put_album(self.to_dict())
 
-    def set_cover(self, image_url):
+    
+    def photos(self):
+        images_list = model_methods.get_album_images(self.path)
+        images = []
+
+        for album_image_dict in images_list:
+            album_image = Image.from_dict(album_image_dict)
+            images.append(album_image)
+
+        return images
+
+
+
+    def update_cover(self, image_url):
         if Image.get(image_url) is None:
             raise Exception("Cover image must exist already before being assigned to an album as a cover")
         
         self.cover = image_url
+        model_methods.update_cover(self.to_dict())
+
+
 
 
 # run once

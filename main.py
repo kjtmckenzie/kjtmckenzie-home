@@ -13,7 +13,8 @@ from flask import (
     render_template,
     flash,
     request,
-    send_from_directory
+    send_from_directory,
+    redirect
 )
 
 from settings import init, ALLOWED_EXTENSIONS
@@ -27,10 +28,10 @@ def allowed_file(filename):
 
 
 def upload_file(file, album):
-    folder = "photography/" + album
+    folder = "albums/" + album + "/"
     img = None
     if album == "covers":
-        folder = "covers"
+        folder = "covers/"
     if allowed_file(file.filename):
         saved_file_name = storage.upload_file(file, folder)
         img = Image(url=saved_file_name, album=album)
@@ -85,11 +86,8 @@ def admin():
                 for file in uploaded_files:
                     if 'cover_image' in request.form:
                         img = upload_file(file, "covers")
-                        print("request.form['album'] = %s" %
-                              str(request.form['album']))
                         album = Album.get(request.form['album'])
-                        album.set_cover(img.url)
-                        album.put()
+                        album.update_cover(img.url)
                     else:
                         upload_file(file, request.form['album'])
 
@@ -105,16 +103,38 @@ def favicon():
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
+@app.route('/photography/', defaults={'path': ''})
+@app.route('/photography/<path:path>')
+def photography(path):
+
+    if len(path) > 0:
+        album = Album.get(path)
+        if album is None:
+            return redirect("./")
+        photos = album.photos()
+        context = {
+            'album': album,
+            'photos': photos
+        }
+
+        return render_template('album.html', context=context)
+
+    albums = Album.active_albums()
+    albums = [] if albums is None else albums
+
+    context = {
+        'albums': albums
+    }
+
+    return render_template('photography.html', context=context)
+
+
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
     
     albums = Album.active_albums()
-
-    if albums is None or albums == []:
-        Album(title="Test 1", path="test-1", location="Test location 1").put()
-        Album(title="Test 2", path="test-2", location="Test location 2").put()
-        albums = Album.active_albums()
 
     albums = [] if albums is None else albums
 

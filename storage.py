@@ -11,6 +11,8 @@ from settings import init
 from flask import Flask
 import os
 
+from google.api_core.exceptions import NotFound
+
 app = Flask(__name__)
 init(app)
 
@@ -28,7 +30,7 @@ def _safe_filename(filename):
     return "{0}-{1}.{2}".format(basename, date, extension)
 
 
-def upload_file(file, folder):
+def upload_file(file, folder, make_public=True):
     """
     Uploads a file to a given Cloud Storage bucket and returns the public url
     to the new object.
@@ -40,23 +42,27 @@ def upload_file(file, folder):
     filename = _safe_filename(file.filename)
 
     if app.config['IS_DEV']:
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file.save(os.path.join(app.config['UPLOAD_BUCKET'], folder, filename))
         url = "/uploads/" + filename
     else:
         client = storage.Client()
-        bucket = client.bucket(app.config['UPLOAD_FOLDER'] + folder)
-        blob = bucket.blob(filename)
+        bucket = client.bucket(app.config['UPLOAD_BUCKET'])
+        blob = bucket.blob(folder + filename)
 
-        blob.upload_from_string(
-            file.read(),
-            content_type=file.content_type)
+        try: 
+            blob.upload_from_string(
+                file.read(),
+                content_type=file.content_type)
+        except NotFound:
+            raise NotFound("Could not upload file, bucket or folder %s does not exist" %
+                           (app.config['UPLOAD_BUCKET'] + folder))
+
+        if make_public:
+            blob.make_public()
 
         url = blob.public_url
 
     if isinstance(url, six.binary_type):
         url = url.decode('utf-8')
-
-
-    print("URL of uploaded file: %s" % str(url))
 
     return url

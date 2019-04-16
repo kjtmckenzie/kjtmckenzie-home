@@ -8,7 +8,7 @@ from google.cloud import firestore
 
 PROJECT = "kjtmckenzie-home-fs"
 
-UPLOAD_BUCKET = 'gs://' + PROJECT
+UPLOAD_BUCKET = "kjtmckenzie-home-fs.appspot.com"
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 def init(app):
@@ -18,10 +18,11 @@ def init(app):
     if os.getenv('GAE_ENV', '').startswith('standard'):
         app.config['IS_DEV'] = False
         app.debug = False
-        app.config['UPLOAD_FOLDER'] = UPLOAD_BUCKET
+        app.config['UPLOAD_BUCKET'] = UPLOAD_BUCKET
     else:
-        app.config['IS_DEV'] = True
-        app.debug = True
-        app.config['UPLOAD_FOLDER'] = ""  # just post to /images/
+        app.config['IS_DEV'] = False
+        app.debug = False
+        #app.config['UPLOAD_FOLDER'] = ""  # just post to /images/
+        app.config['UPLOAD_BUCKET'] = UPLOAD_BUCKET
 
        

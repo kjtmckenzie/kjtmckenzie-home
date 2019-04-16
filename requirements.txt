@@ -1,5 +1,4 @@
 Flask==1.0.2
-google-cloud-datastore==1.7.1
 google-auth==1.6.1
 anom==0.9.1
 google-cloud-storage==1.13.0

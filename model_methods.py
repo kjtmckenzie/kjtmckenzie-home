@@ -45,16 +45,30 @@ def get_active_albums():
     
 
 def get_album(path):
-    print("In get_album in model_methods with path %s" % str(path))
     album = next(db.collection('Albums').where('path', '==', path).get(), None)
-    print("Album returned is %s" % str(album))
     if album:
         album = album.to_dict()
     return album
 
 
+def get_album_images(path):
+    image_gen = db.collection('Images').where('album', '==', path).get()
+    images = []
+    for image in image_gen:
+        images.append(image.to_dict())
+    return images
+
+
 def put_album(album):
     db.collection('Albums').add(album)
+
+
+def update_cover(album):
+    new_cover = album['cover']
+    album = next(db.collection('Albums').where('path', '==', album['path']).get(), None)
+    album_ref = db.collection('Albums').document(album.id)
+    album_ref.update({'cover': new_cover})
+
 
 
 
