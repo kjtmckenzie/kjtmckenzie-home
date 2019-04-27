@@ -42,8 +42,8 @@ def upload_file(file, folder, make_public=True):
     filename = _safe_filename(file.filename)
 
     if app.config['IS_DEV']:
-        file.save(os.path.join(app.config['UPLOAD_BUCKET'], folder, filename))
-        url = "/uploads/" + filename
+        file.save(os.path.join(app.config['UPLOAD_BUCKET'], filename))
+        url = "/" + app.config['UPLOAD_BUCKET'] + "/" + filename
     else:
         client = storage.Client()
         bucket = client.bucket(app.config['UPLOAD_BUCKET'])

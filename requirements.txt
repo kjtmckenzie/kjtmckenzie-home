@@ -1,6 +1,5 @@
-Flask==1.0.2
+Flask
 google-auth==1.6.1
-anom==0.9.1
 google-cloud-storage==1.13.0
 google-cloud-logging==1.8.0
 gunicorn==19.9.0
@@ -9,3 +8,10 @@ six==1.11.0
 requests[security]==2.20.1
 mock==2.0.0
 google-cloud-firestore==0.31.0
+grpcio==1.18.0
+#google-python-cloud-debugger
+flask-login
+pyjwt
+requests
+cryptography
+Werkzeug

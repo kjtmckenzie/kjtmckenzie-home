@@ -1,100 +1,83 @@
+#!/usr/bin/env python
+
 # Copyright (C) 2017 Kevin McKenzie.
 #
 # Code may not be copied, reused,  or modified in any way without written
 # consent from Kevin McKenzie.
 
 import logging
-from models_fs import Album, Image, User
-import storage
+from models_fs import Album, User
 import os
-
+from settings import init
+import admin
+import photography
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask import (
     Flask,
     render_template,
-    flash,
-    request,
     send_from_directory,
-    redirect
+    request,
+    redirect,
+    url_for
 )
-
-from settings import init, ALLOWED_EXTENSIONS
 
 app = Flask(__name__)
 init(app)
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+from flask_firebase import FirebaseAuth
+
+auth = FirebaseAuth(app)
+login_manager = LoginManager(app)
+
+app.register_blueprint(auth.blueprint, url_prefix='/auth')
 
 
-def upload_file(file, album):
-    folder = "albums/" + album + "/"
-    img = None
-    if album == "covers":
-        folder = "covers/"
-    if allowed_file(file.filename):
-        saved_file_name = storage.upload_file(file, folder)
-        img = Image(url=saved_file_name, album=album)
-        img.put()
-        flash('Uploaded photo to album %s' % album)
-    else:
-        flash('File extension not supported')
-        raise Exception("File extension not supported")
-    return img
+@auth.production_loader
+def production_sign_in(token):
+    account = User.get(firebaseID=token['sub'])
+    if account is None:
+        account = User(token['email'], token['sub'])
+        account.put()
+    login_user(account)
+
+
+@auth.development_loader
+def development_sign_in(email):
+    account = User.get(email=email)
+    if account is None:
+        account = User(email=email, firebaseID=None, admin=True)
+        account.put()
+    login_user(account)
+
+
+@auth.unloader
+def sign_out():
+    logout_user()
+
+
+@login_manager.user_loader
+def load_user(account_id):
+    return User.get(email=account_id)
+
+
+@login_manager.unauthorized_handler
+def authentication_required():
+    return redirect(auth.url_for('widget', mode='select', next=request.url))
 
 
 @app.route('/admin/', methods=['POST', 'GET'])
-def admin():
-    #user = User.get(users.get_current_user().email())
-    #TODO
+@login_required
+def render_admin():
+    if not current_user.admin:
+        return "User is not a site admin", 403
+    return admin.render()
 
-    user = User.get("kjtmckenzie@gmail.com")
 
-    if user is None and app.debug:
-        admin = User("kjtmckenzie@gmail.com", admin=True)
-        admin.put()
-
-    if not app.debug and (user is None or not user.admin):
-        return 'Only admins can access this site', 401
-
-    albums = Album.active_albums()
-
-    if albums is None or len(albums) < 1:
-        albums = []
-
-    context = {
-        'albums': albums
-    }
-
-    if request.method == 'POST':
-        if "create-album" in request.form:
-            try:
-                title = request.form['album']
-                location = request.form['location']
-                path = request.form['path']
-                if len(title) > 1:
-                    new_album = Album(title, path, location=location)
-                    new_album.put()
-                    context['albums'] = context['albums'] + [new_album]
-                    flash('New album %s created' % new_album)
-            except Exception as e:
-                flash('Album creation failed: %s' % e)
-
-        if "upload-image" in request.form:
-            try:
-                uploaded_files = request.files.getlist("file")
-                for file in uploaded_files:
-                    if 'cover_image' in request.form:
-                        img = upload_file(file, "covers")
-                        album = Album.get(request.form['album'])
-                        album.update_cover(img.url)
-                    else:
-                        upload_file(file, request.form['album'])
-
-            except Exception as e:
-                flash('Image upload failed: %s' % e)
-
-    return render_template('admin.html', context=context)
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
 
 
 @app.route('/favicon.ico')
@@ -105,52 +88,38 @@ def favicon():
 
 @app.route('/photography/', defaults={'path': ''})
 @app.route('/photography/<path:path>')
-def photography(path):
+def render_photography(path):
+    return photography.render(path)
 
-    if len(path) > 0:
-        album = Album.get(path)
-        if album is None:
-            return redirect("./")
-        photos = album.photos()
-        context = {
-            'album': album,
-            'photos': photos
-        }
 
-        return render_template('album.html', context=context)
-
-    albums = Album.active_albums()
-    albums = [] if albums is None else albums
-
-    context = {
-        'albums': albums
-    }
-
-    return render_template('photography.html', context=context)
-
+@app.route('/dev_uploads/<path:path>')
+def dev_uploads(path):
+    if app.config['IS_DEV']:
+        return send_from_directory(os.path.join(app.root_path, 'dev_uploads'), path)
+    else:
+        logging.exception('URL only available in dev environment')
+        return 'URL only available in dev environment', 500
 
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
-    
     albums = Album.active_albums()
-
-    albums = [] if albums is None else albums
-
-    context = {
-        'albums' : albums
-    }
-
+    context = {'albums': [] if albums is None else albums}
     return render_template('index.html', context=context)
 
 
 @app.errorhandler(500)
 def server_error(e):
     logging.exception('An error has occurred')
-
     return 'An error has occurred on the server', 500
 
+
+try:
+    import googleclouddebugger
+    googleclouddebugger.enable()
+except ImportError:
+    pass
 
 
 if __name__ == '__main__':

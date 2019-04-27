@@ -4,31 +4,23 @@
 # consent from Kevin McKenzie.
 
 import logging
-import models
-from models import Album, CoverImage
-
+from models_fs import Album
+from settings import init
 from flask import (
     Flask,
     render_template,
-    flash,
     redirect
 )
-
-import flask
-from settings import init
 
 app = Flask(__name__)
 init(app)
 
-@app.route('/photography/', defaults={'path': ''})
-@app.route('/photography/<path:path>')
-def index(path):
-
+def render(path):
     if len(path) > 0:
         album = Album.get(path)
         if album is None:
             return redirect("./")
-        photos = Album.photos(album.title)
+        photos = album.photos()
         context = {
             'album': album,
             'photos': photos
@@ -37,24 +29,11 @@ def index(path):
         return render_template('album.html', context=context)
 
     albums = Album.active_albums()
+    albums = [] if albums is None else albums
 
-    album_list = []
-
-    for album in albums:
-        album_dict = {
-            "album": album,
-            "cover": CoverImage.get(album.title)
-        }
-        album_list.append(album_dict)
     context = {
-        'albums' : album_list
+        'albums': albums
     }
 
     return render_template('photography.html', context=context)
 
-
-@app.errorhandler(500)
-def server_error(e):
-    logging.exception('An error has occurred')
-
-    return 'An error has occurred on the server', 500

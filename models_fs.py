@@ -27,29 +27,48 @@ class GenericModel(object):
 
 # how do we prevent duplicate users from being created?
 class User(GenericModel):
-    def __init__(self, email, admin=False):
+    def __init__(self, email, firebaseID, admin=False, is_active=True):
         self.email = email
+        self.firebaseID = firebaseID
         self.admin = admin
+        self.is_active = True
+        self.is_authenticated = True
+        self.is_anonymous = False
 
     @staticmethod
     def from_dict(source):
-        user = User(source['email'])
+        user = User(source['email'], source['firebaseID'])
 
         if 'admin' in source:
             user.admin = source['admin']
 
+        if 'is_authenticated' in source:
+            user.is_authenticated = source['is_authenticated']
+
+        if 'is_active' in source:
+            user.is_active = source['is_active']
+
+        if 'is_anonymous' in source:
+            user.is_anonymous = source['is_anonymous']
+
         return user
 
     @staticmethod
-    def get(email):
+    def get(email=None, firebaseID=None):
         try:
-            return User.from_dict(model_methods.get_user(email=email))
+            if email is not None:
+                return User.from_dict(model_methods.get_user(email=email))
+            elif firebaseID is not None:
+                return User.from_dict(model_methods.get_user(firebaseID=firebaseID))
         except:
             return None
 
 
     def put(self):
         model_methods.put_user(self.to_dict())
+
+    def get_id(self):
+        return self.email
 
 
 class Image(GenericModel):

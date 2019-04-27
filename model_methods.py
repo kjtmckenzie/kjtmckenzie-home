@@ -12,8 +12,12 @@ init(app)
 db = app.config['db']
 
 
-def get_user(email):
-    user = next(db.collection('Users').where('email', '==', email).get(), None)
+def get_user(email=None, firebaseID=None):
+    user = None
+    if email is not None:
+        user = next(db.collection('Users').where('email', '==', email).get(), None)
+    elif firebaseID is not None:
+        user = next(db.collection('Users').where('firebaseID', '==', firebaseID).get(), None)
     if user is not None:
         user = user.to_dict()
     return user
