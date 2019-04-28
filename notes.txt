@@ -23,7 +23,11 @@ cd ~/personal/kjtmckenzie-home/; source env/bin/activate; export GOOGLE_APPLICAT
 
 #TODO
 Blueprints
-Get authentication to work on admin page
 Add logging
-Convert to containers?
 Image resizing cloud function?
+Figure out how to make container prod and run on cloud run
+
+
+
+docker build -t gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs:latest .              
+docker run -e "PORT=8080, " -p 8080:8080 gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs

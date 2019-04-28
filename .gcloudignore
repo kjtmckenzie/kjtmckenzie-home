@@ -17,3 +17,15 @@
 __pycache__/
 # Ignored by the build system
 /setup.cfg
+
+dev_uploads/*
+
+env/*
+
+*.pyc
+.idea/*
+.vscode/*
+
+*.json
+
+dev_flask_secret.txt
