@@ -9,13 +9,18 @@ from settings import init
 from flask import (
     Flask,
     render_template,
-    redirect
+    redirect,
+    Blueprint
 )
 
 app = Flask(__name__)
 init(app)
 
-def render(path):
+blueprint = Blueprint('photography', __name__)
+
+@blueprint.route('/photography/', defaults={'path': ''})
+@blueprint.route('/photography/<path:path>')
+def photography(path):
     if len(path) > 0:
         album = Album.get(path)
         if album is None:
