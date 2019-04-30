@@ -12,6 +12,7 @@ def photography(path):
     if len(path) > 0:
         album = Album.get(path)
         if album is None:
+            logging.warning('No photos for album page %s' % path)
             return redirect("./")
         photos = album.photos()
         context = {

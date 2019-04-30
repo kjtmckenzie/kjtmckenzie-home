@@ -2,6 +2,8 @@
 
 import os
 from google.cloud import firestore, storage
+import google.cloud.logging
+import logging
 
 PROJECT = "kjtmckenzie-home-fs"
 CONFIG_BUCKET = 'kjtmckenzie-home-fs-config'
@@ -20,6 +22,7 @@ def get_secret(filename):
     return str(blob.download_as_string().decode('UTF-8'))
 
 def init(app):
+    logging.info('Initializing application')
     app.config['db'] = firestore.Client(project=PROJECT)
     
     app.config['FIREBASE_PROJECT_ID'] = PROJECT
@@ -31,11 +34,15 @@ def init(app):
         app.config['IS_DEV'] = False
         app.debug = False
         app.config['UPLOAD_BUCKET'] = UPLOAD_BUCKET
+        client = google.cloud.logging.Client()
+        client.setup_logging()
+        logging.basicConfig(level=logging.INFO)
     else:
         app.config['IS_DEV'] = True
         app.config['FIREBASE_API_KEY'] = "dev"
         app.secret_key = open(DEV_FLASK_SECRET, 'rb').read()
         app.debug = True
         app.config['UPLOAD_BUCKET'] = "dev_uploads"
+        logging.basicConfig(level=logging.INFO)
 
        

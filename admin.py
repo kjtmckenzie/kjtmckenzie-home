@@ -35,14 +35,15 @@ def upload_file(file, album):
     if album == "covers":
         folder = "covers/"
     if allowed_file(file.filename):
-        # FIX THIS  
         saved_file_name = storage.upload_file(
             file, folder, app.config['UPLOAD_BUCKET'], is_dev=app.config['IS_DEV'])
         img = Image(url=saved_file_name, album=album)
         img.put()
         flash('Uploaded photo to album %s' % album)
+        logging.info('Uploaded photo to album %s' % album)
     else:
         flash('File extension not supported')
+        logging.warning('File extension not supported for file %s' % file.filename)
         raise Exception("File extension not supported")
     return img
 
@@ -51,6 +52,7 @@ def upload_file(file, album):
 @login_required
 def admin():
     if not current_user.admin:
+        logging.info("User %s not allowed to access admin page" % current_user.email)
         return "User is not a site admin", 403
 
     albums = Album.active_albums()
@@ -73,8 +75,10 @@ def admin():
                     new_album.put()
                     context['albums'] = context['albums'] + [new_album]
                     flash('New album %s created' % new_album)
+                    logging.info('New album %s created' % new_album)
             except Exception as e:
                 flash('Album creation failed: %s' % e)
+                logging.error('Album creation failed: %s' % e)
 
         if "upload-image" in request.form:
             try:
@@ -89,6 +93,7 @@ def admin():
 
             except Exception as e:
                 flash('Image upload failed: %s' % e)
+                logging.error('Image upload failed: %s' % e)
 
     return render_template('admin.html', context=context)
 
