@@ -1,45 +1,29 @@
 #!/usr/bin/env python
 
-# Copyright (C) 2017 Kevin McKenzie.
-#
-# Code may not be copied, reused,  or modified in any way without written
-# consent from Kevin McKenzie.
+# Copyright (C) 2019 Kevin McKenzie.
 
-import logging
+import logging, os
 from models_fs import Album, User
-import os
 from settings import init
-import admin
-import photography
-from flask_login import (
-    LoginManager,
-    UserMixin,
-    login_user,
-    logout_user,
-    login_required,
-    current_user
-)
-from flask import (
-    Flask,
-    render_template,
-    send_from_directory,
-    request,
-    redirect,
-    url_for
-)
+import admin, photography, utils
+from flask_firebase import FirebaseAuth
+from flask_login import LoginManager, login_user, logout_user, login_required
+from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 init(app)
 
-from flask_firebase import FirebaseAuth
-
+# Set up Firebase authentication
 auth = FirebaseAuth(app)
 login_manager = LoginManager(app)
 
+# Establish blueprints for website routing
 app.register_blueprint(auth.blueprint, url_prefix='/auth')
 app.register_blueprint(photography.blueprint)
+app.register_blueprint(admin.blueprint)
+app.register_blueprint(utils.blueprint)
 
-
+# Add firebase user loaders and login/logout pages
 @auth.production_loader
 def production_sign_in(token):
     account = User.get(firebaseID=token['sub'])
@@ -73,34 +57,11 @@ def authentication_required():
     return redirect(auth.url_for('widget', mode='select', next=request.url))
 
 
-@app.route('/admin/', methods=['POST', 'GET'])
-@login_required
-def render_admin():
-    if not current_user.admin:
-        return "User is not a site admin", 403
-    return admin.render()
-
-
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('index'))
-
-
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'),
-                               'favicon.ico', mimetype='image/vnd.microsoft.icon')
-
-
-@app.route('/dev_uploads/<path:path>')
-def dev_uploads(path):
-    if app.config['IS_DEV']:
-        return send_from_directory(os.path.join(app.root_path, 'dev_uploads'), path)
-    else:
-        logging.exception('URL only available in dev environment')
-        return 'URL only available in dev environment', 500
 
 
 @app.route('/', defaults={'path': ''})
@@ -111,12 +72,7 @@ def index(path):
     return render_template('index.html', context=context)
 
 
-@app.errorhandler(500)
-def server_error(e):
-    logging.exception('An error has occurred')
-    return 'An error has occurred on the server', 500
-
-
+# Attempt to load the cloud debugger
 try:
     import googleclouddebugger
     googleclouddebugger.enable()
@@ -124,6 +80,6 @@ except ImportError:
     pass
 
 
+# used only in development
 if __name__ == '__main__':
-    # used only in development
     app.run(host='0.0.0.0', port=8080, debug=True)

@@ -1,20 +1,8 @@
-# Copyright (C) 2017 Kevin McKenzie.
-#
-# Code may not be copied, reused,  or modified in any way without written
-# consent from Kevin McKenzie.
+# Copyright (C) 2019 Kevin McKenzie.
 
 import logging
 from models_fs import Album
-from settings import init
-from flask import (
-    Flask,
-    render_template,
-    redirect,
-    Blueprint
-)
-
-app = Flask(__name__)
-init(app)
+from flask import render_template, redirect, Blueprint
 
 blueprint = Blueprint('photography', __name__)
 

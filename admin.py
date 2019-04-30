@@ -11,11 +11,18 @@ from flask import (
     Flask,
     render_template,
     flash,
-    request
+    request,
+    Blueprint
+)
+from flask_login import (
+    login_required,
+    current_user
 )
 
 app = Flask(__name__)
 init(app)
+
+blueprint = Blueprint('admin', __name__)
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -28,7 +35,9 @@ def upload_file(file, album):
     if album == "covers":
         folder = "covers/"
     if allowed_file(file.filename):
-        saved_file_name = storage.upload_file(file, folder)
+        # FIX THIS  
+        saved_file_name = storage.upload_file(
+            file, folder, app.config['UPLOAD_BUCKET'], is_dev=app.config['IS_DEV'])
         img = Image(url=saved_file_name, album=album)
         img.put()
         flash('Uploaded photo to album %s' % album)
@@ -38,15 +47,11 @@ def upload_file(file, album):
     return img
 
 
-def render():
-    user = User.get("kjtmckenzie@gmail.com")
-
-    if user is None and app.debug:
-        admin = User("kjtmckenzie@gmail.com", firebaseID="kjtmckenzie@gmail.com", admin=True)
-        admin.put()
-
-    if not app.debug and (user is None or not user.admin):
-        return 'Only admins can access this site', 401
+@blueprint.route('/admin/', methods=['POST', 'GET'])
+@login_required
+def admin():
+    if not current_user.admin:
+        return "User is not a site admin", 403
 
     albums = Album.active_albums()
 

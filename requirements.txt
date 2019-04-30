@@ -9,7 +9,7 @@ requests[security]==2.20.1
 mock==2.0.0
 google-cloud-firestore==0.31.0
 grpcio==1.18.0
-#google-python-cloud-debugger
+#google-python-cloud-debugger==2.10
 flask-login
 pyjwt
 requests

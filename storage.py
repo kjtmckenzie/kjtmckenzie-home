@@ -1,21 +1,12 @@
-# Copyright (C) 2017 Kevin McKenzie.
-#
-# Code may not be copied, reused,  or modified in any way without written
-# consent from Kevin McKenzie.
+# Copyright (C) 2019 Kevin McKenzie.
 
 from werkzeug.utils import secure_filename
 from google.cloud import storage
 import datetime
 import six
-from settings import init
-from flask import Flask
 import os
 
 from google.api_core.exceptions import NotFound
-
-app = Flask(__name__)
-init(app)
-
 
 def _safe_filename(filename):
     """
@@ -30,7 +21,7 @@ def _safe_filename(filename):
     return "{0}-{1}.{2}".format(basename, date, extension)
 
 
-def upload_file(file, folder, make_public=True):
+def upload_file(file, folder, upload_bucket, make_public=True, is_dev=False):
     """
     Uploads a file to a given Cloud Storage bucket and returns the public url
     to the new object.
@@ -41,12 +32,12 @@ def upload_file(file, folder, make_public=True):
 
     filename = _safe_filename(file.filename)
 
-    if app.config['IS_DEV']:
-        file.save(os.path.join(app.config['UPLOAD_BUCKET'], filename))
-        url = "/" + app.config['UPLOAD_BUCKET'] + "/" + filename
+    if is_dev:
+        file.save(os.path.join(upload_bucket, filename))
+        url = "/" + upload_bucket + "/" + filename
     else:
         client = storage.Client()
-        bucket = client.bucket(app.config['UPLOAD_BUCKET'])
+        bucket = client.bucket(upload_bucket)
         blob = bucket.blob(folder + filename)
 
         try: 
@@ -55,7 +46,7 @@ def upload_file(file, folder, make_public=True):
                 content_type=file.content_type)
         except NotFound:
             raise NotFound("Could not upload file, bucket or folder %s does not exist" %
-                           (app.config['UPLOAD_BUCKET'] + folder))
+                           (upload_bucket + folder))
 
         if make_public:
             blob.make_public()
