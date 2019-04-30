@@ -22,7 +22,6 @@ cd ~/personal/kjtmckenzie-home/; source env/bin/activate; export GOOGLE_APPLICAT
 
 
 #TODO
-Add logging
 Image resizing cloud function?
 Figure out how to make container prod and run on cloud run
 
