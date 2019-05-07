@@ -22,12 +22,26 @@ cd ~/personal/kjtmckenzie-home/; source env/bin/activate; export GOOGLE_APPLICAT
 
 
 #TODO
+Create make file
 Image resizing cloud function?
-Better secrets?
 
 
 # Cloud run
-docker build -t gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs:latest .              
-docker run -e "PORT=8080" -p 8080:8080 gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs
+
+docker build -t gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs:latest .  
+export GOOGLE_APPLICATION_CREDENTIALS=kjtmckenzie-home-fs-e95cb6b832bf.json
+DEV_FLASK_SECRET=`cat dev_flask_secret.txt`
+PORT=8080 && docker run \
+       -p 8080:${PORT} \
+       -e PORT=${PORT} \
+       -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/keys/kjtmckenzie-home-fs-e95cb6b832bf.json \
+       -e DEV_FLASK_SECRET=$DEV_FLASK_SECRET \
+       -v $GOOGLE_APPLICATION_CREDENTIALS:/tmp/keys/kjtmckenzie-home-fs-e95cb6b832bf.json:ro \
+       gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs
+
+docker build -t gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs:latest .  
 docker push gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs:latest
-gcloud beta run deploy --image gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs
+gcloud beta run deploy --image gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs --update-env-vars CLOUD_RUN=True
+
+
+

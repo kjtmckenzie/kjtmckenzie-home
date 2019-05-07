@@ -28,7 +28,7 @@ def init(app):
     app.config['FIREBASE_PROJECT_ID'] = PROJECT
     app.config['FIREBASE_AUTH_SIGN_IN_OPTIONS'] = PROVIDERS
 
-    if os.getenv('GAE_ENV', '').startswith('standard'):
+    if os.getenv('GAE_ENV', '').startswith('standard') or os.getenv('CLOUD_RUN', '') == "True":
         app.secret_key = get_secret(PROD_FLASK_SECRET)
         app.config['FIREBASE_API_KEY'] = get_secret(FIREBASE_API_KEY)
         app.config['IS_DEV'] = False
@@ -40,7 +40,10 @@ def init(app):
     else:
         app.config['IS_DEV'] = True
         app.config['FIREBASE_API_KEY'] = "dev"
-        app.secret_key = open(DEV_FLASK_SECRET, 'rb').read()
+        if os.getenv('DEV_FLASK_SECRET'):
+            app.secret_key = os.getenv('DEV_FLASK_SECRET')
+        else:
+            app.secret_key = open(DEV_FLASK_SECRET, 'rb').read()
         app.debug = True
         app.config['UPLOAD_BUCKET'] = "dev_uploads"
         logging.basicConfig(level=logging.INFO)
