@@ -22,11 +22,12 @@ cd ~/personal/kjtmckenzie-home/; source env/bin/activate; export GOOGLE_APPLICAT
 
 
 #TODO
-Use retry
 Image resizing cloud function?
-Figure out how to make container prod and run on cloud run
+Better secrets?
 
 
-
+# Cloud run
 docker build -t gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs:latest .              
 docker run -e "PORT=8080" -p 8080:8080 gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs
+docker push gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs:latest
+gcloud beta run deploy --image gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs
