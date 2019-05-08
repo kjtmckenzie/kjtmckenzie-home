@@ -16,3 +16,4 @@ requests
 cryptography
 Werkzeug
 retrying
+Flask-SSLify
