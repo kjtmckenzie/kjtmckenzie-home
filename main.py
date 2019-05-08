@@ -30,7 +30,7 @@ def production_sign_in(token):
     if account is None:
         logging.info(
             "New production user %s logged in, creating record" % token['email'])
-        account = User(token['email'], token['sub'])
+        account = User(token['email'], token['sub'], admin=False)
         account.put()
     login_user(account)
 
@@ -73,7 +73,7 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-
+# used only in development, images normally served from GCS
 @app.route('/dev_uploads/<path:path>')
 def dev_uploads(path):
     if app.config['IS_DEV']:
@@ -83,6 +83,7 @@ def dev_uploads(path):
         return 'URL only available in dev environment', 500
 
 
+# load the homepage
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
