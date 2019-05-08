@@ -54,7 +54,7 @@ def put_image(image):
 @retry(wait_exponential_multiplier=100, wait_exponential_max=2000, retry_on_exception=retry_if_service_unavailable_error)
 def get_active_albums():
     all_albums = []
-    album_generator = db.collection('Albums').where('active', '==', True).get()
+    album_generator = db.collection('Albums').where('active', '==', True).order_by('title').get()
     for album in album_generator:
         if album:
             album = album.to_dict()
@@ -72,7 +72,7 @@ def get_album(path):
 
 @retry(wait_exponential_multiplier=100, wait_exponential_max=2000, retry_on_exception=retry_if_service_unavailable_error)
 def get_album_images(path):
-    image_gen = db.collection('Images').where('album', '==', path).get()
+    image_gen = db.collection('Images').where('album', '==', path).order_by('url').get()
     images = []
     for image in image_gen:
         images.append(image.to_dict())
