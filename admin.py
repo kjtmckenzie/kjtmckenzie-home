@@ -1,5 +1,6 @@
 # Copyright (C) 2019 Kevin McKenzie.
 
+from flask_sslify import SSLify
 import logging
 from models_fs import Album, Image, User
 from settings import init, ALLOWED_EXTENSIONS
@@ -17,6 +18,7 @@ from flask_login import (
 )
 
 app = Flask(__name__)
+sslify = SSLify(app)
 init(app)
 
 blueprint = Blueprint('admin', __name__)

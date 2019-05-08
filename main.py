@@ -9,8 +9,10 @@ import admin, photography
 from flask_firebase import FirebaseAuth
 from flask_login import LoginManager, login_user, logout_user, login_required
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from flask_sslify import SSLify
 
 app = Flask(__name__)
+sslify = SSLify(app)
 init(app)
 
 # Set up Firebase authentication
