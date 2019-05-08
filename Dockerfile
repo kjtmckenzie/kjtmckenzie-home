@@ -1,5 +1,5 @@
 FROM python:3.7
-MAINTAINER Kevin McKenzie "kjtmckenzie@gmail.com"
+LABEL maintainer="kjtmckenzie@gmail.com"
 COPY . /main
 WORKDIR /main
 RUN pip install -r requirements.txt
