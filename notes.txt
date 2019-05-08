@@ -22,14 +22,14 @@ cd ~/personal/kjtmckenzie-home/; source env/bin/activate; export GOOGLE_APPLICAT
 
 
 #TODO
-Create make file
 Image resizing cloud function?
+Add more comments
 
 
 # Cloud run
 
 docker build -t gcr.io/kjtmckenzie-home-fs/kjtmckenzie-home-fs:latest .  
-export GOOGLE_APPLICATION_CREDENTIALS=kjtmckenzie-home-fs-e95cb6b832bf.json
+export GOOGLE_APPLICATION_CREDENTIALS=`pwd`/kjtmckenzie-home-fs-e95cb6b832bf.json
 DEV_FLASK_SECRET=`cat dev_flask_secret.txt`
 PORT=8080 && docker run \
        -p 8080:${PORT} \
