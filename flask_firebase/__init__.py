@@ -1,3 +1,8 @@
+"""
+Code courtesy of Klokan Technologies GmbH at 
+https://github.com/klokantech/flask-firebase
+"""
+
 import jwt
 import requests
 

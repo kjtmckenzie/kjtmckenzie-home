@@ -1,11 +1,11 @@
 import logging
-import six
-import base64
 import model_methods
 
 cover_title = "covers"
 
+
 class GenericModel(object):
+    '''Base class for a model in the database'''
 
     def to_dict(self):
         return vars(self)
@@ -25,8 +25,12 @@ class GenericModel(object):
         return repr_str
         
 
-# how do we prevent duplicate users from being created?
 class User(GenericModel):
+    """
+    Represents a user that authenticates into the system.  
+    Does not do authorization, which is handled in the admin page.
+    """
+
     def __init__(self, email, firebaseID, admin=False, is_active=True):
         self.email = email
         self.firebaseID = firebaseID
@@ -65,6 +69,7 @@ class User(GenericModel):
 
 
     def put(self):
+        logging.info("Creating new user with email %s and firebaseID %s" % (str(self.email), str(self.firebaseID)))
         model_methods.put_user(self.to_dict())
 
     def get_id(self):
@@ -72,6 +77,8 @@ class User(GenericModel):
 
 
 class Image(GenericModel):
+    '''Represents an image, which has a URL and an album it belongs to.'''
+       
     def __init__(self, url, album):
         self.url = url
         self.album = album
@@ -93,10 +100,13 @@ class Image(GenericModel):
             return None
 
     def put(self):
+        logging.info("Creating new image with url %s in album %s" % (str(self.url), str(self.album)))
         model_methods.put_image(self.to_dict())
 
 
 class Album(GenericModel):
+    '''Represents an album, which as a cover and set of images.'''
+
     def __init__(self, title, path, active=True, location=None, cover=None):
         self.title = title
         self.path = path
@@ -144,10 +154,11 @@ class Album(GenericModel):
         return albums
 
     def put(self):
+        logging.info("Creating new album with path %s" % str(self.path))
         model_methods.put_album(self.to_dict())
-
     
     def photos(self):
+        ''' Return the photos belonging to this album'''
         images_list = model_methods.get_album_images(self.path)
         images = []
 
@@ -167,10 +178,8 @@ class Album(GenericModel):
         model_methods.update_cover(self.to_dict())
 
 
-
-
 # run once
 if Album.get(cover_title) is None:
-    print("Creating the covers album")
+    logging.info("Creating the covers album")
     cover_album = Album(cover_title, cover_title)
     cover_album.put()

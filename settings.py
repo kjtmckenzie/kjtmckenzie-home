@@ -21,6 +21,7 @@ def get_secret(filename):
     blob = bucket.get_blob(filename)
     return str(blob.download_as_string().decode('UTF-8'))
 
+
 def init(app):
     logging.info('Initializing application')
     app.config['db'] = firestore.Client(project=PROJECT)

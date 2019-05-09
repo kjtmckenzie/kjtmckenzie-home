@@ -1,19 +1,13 @@
 import logging
-import six
-import base64
 import google.api_core
 from google.cloud import firestore
 from settings import init
 from retrying import retry
-
 from flask import Flask
 
 app = Flask(__name__)
-
 init(app)
 db = app.config['db']
-
-# use retry library on google.api_core.exceptions.ServiceUnavailable
 
 
 def retry_if_service_unavailable_error(exception):
@@ -21,7 +15,7 @@ def retry_if_service_unavailable_error(exception):
     return isinstance(exception, google.api_core.exceptions.ServiceUnavailable)
 
 
-@retry(wait_exponential_multiplier=100, wait_exponential_max=2000, retry_on_exception=retry_if_service_unavailable_error)
+@retry(wait_exponential_multiplier=100,wait_exponential_max=2000, retry_on_exception=retry_if_service_unavailable_error)
 def get_user(email=None, firebaseID=None):
     user = None
     if email is not None:

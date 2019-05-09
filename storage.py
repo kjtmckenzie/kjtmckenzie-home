@@ -26,7 +26,6 @@ def upload_file(file, folder, upload_bucket, make_public=True, is_dev=False):
     Uploads a file to a given Cloud Storage bucket and returns the public url
     to the new object.
     """
-
     if not file:
         return None
 

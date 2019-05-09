@@ -18,7 +18,7 @@ from flask_login import (
 )
 
 app = Flask(__name__)
-sslify = SSLify(app)
+sslify = SSLify(app) # force HTTPS even when user requests HTTP
 init(app)
 
 blueprint = Blueprint('admin', __name__)
