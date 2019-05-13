@@ -1,52 +1,58 @@
-# Copyright (C) 2017 Kevin McKenzie.
-#
-# Code may not be copied, reused,  or modified in any way without written
-# consent from Kevin McKenzie.
+# Copyright (C) 2019 Kevin McKenzie.
 
-import cloudstorage as gcs
-from cloudstorage.common import local_api_url, local_run
-from google.appengine.api import app_identity
 from werkzeug.utils import secure_filename
+from google.cloud import storage
+import datetime
+import six
 import os
 
-def is_local():
-    return local_run()
+from google.api_core.exceptions import NotFound
 
-def base_url():
-    if local_run():
-        return local_api_url()
-    return "https://storage.googleapis.com"
+def _safe_filename(filename):
+    """
+    Generates a safe filename that is unlikely to collide with existing objects
+    in Google Cloud Storage.
 
-
-BUCKET_NAME = os.environ.get('BUCKET_NAME',
-                       app_identity.get_default_gcs_bucket_name())
-
-
-def write(filename, content_type, content, public=True):
-    write_retry_params = gcs.RetryParams(backoff_factor=1.1)
-    options = {}
-    if public:
-        options = {'x-goog-acl': 'public-read'}
-
-    gcs_file = gcs.open(filename,
-                      'w',
-                      content_type=content_type,
-                      options=options,
-                      retry_params=write_retry_params)
-
-    gcs_file.write(content)
-    gcs_file.close()
+    ``filename.ext`` is transformed into ``filename-YYYY-MM-DD-HHMMSS.ext``
+    """
+    filename = secure_filename(filename)
+    date = datetime.datetime.utcnow().strftime("%Y-%m-%d-%H%M%S")
+    basename, extension = filename.rsplit('.', 1)
+    return "{0}-{1}.{2}".format(basename, date, extension)
 
 
-def read_file(filename):
-    gcs_file = gcs.open(filename)
-    result = gcs_file.read()
-    gcs_file.close()
-    return result
+def upload_file(file, folder, upload_bucket, make_public=True, is_dev=False):
+    """
+    Uploads a file to a given Cloud Storage bucket and returns the public url
+    to the new object.
+    """
+    if not file:
+        return None
 
-def upload_file_to_gcs(uploaded_file, foldername):
-    file_name = '/{0}/{1}/{2}'.format(BUCKET_NAME,
-                foldername,
-                secure_filename(uploaded_file.filename))
-    write(file_name, uploaded_file.content_type, uploaded_file.read())
-    return file_name
+    filename = _safe_filename(file.filename)
+
+    if is_dev:
+        file.save(os.path.join(upload_bucket, filename))
+        url = "/" + upload_bucket + "/" + filename
+    else:
+        client = storage.Client()
+        bucket = client.bucket(upload_bucket)
+        blob = bucket.blob(folder + filename)
+
+        try: 
+            blob.upload_from_string(
+                file.read(),
+                content_type=file.content_type)
+        except NotFound:
+            raise NotFound("Could not upload file, bucket or folder %s does not exist" %
+                           (upload_bucket + folder))
+
+        if make_public:
+            blob.make_public()
+
+        url = blob.public_url
+
+    if isinstance(url, six.binary_type):
+        url = url.decode('utf-8')
+
+    return url

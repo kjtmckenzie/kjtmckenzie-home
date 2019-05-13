@@ -1,0 +1,10 @@
+.gcloudignore
+.git
+.gitignore
+__pycache__/
+*.pyc
+.idea/*
+.vscode/*
+dev_flask_secret.txt
+*.json
+cloud_functions/*

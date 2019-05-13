@@ -4,4 +4,8 @@ lib
 *.json
 *.DS_Store
 .idea/*
+dev_flask_secret.txt
 flask_secret.txt
+env/*
+dev_uploads/*
+cloud_functions/env/*

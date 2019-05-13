@@ -1,54 +1,59 @@
-# Copyright (C) 2017 Kevin McKenzie.
-#
-# Code may not be copied, reused,  or modified in any way without written
-# consent from Kevin McKenzie.
+# Copyright (C) 2019 Kevin McKenzie.
 
+from flask_sslify import SSLify
 import logging
-
+from models_fs import Album, Image, User
+from settings import init, ALLOWED_EXTENSIONS
+import storage
 from flask import (
     Flask,
     render_template,
     flash,
-    request
+    request,
+    Blueprint
+)
+from flask_login import (
+    login_required,
+    current_user
 )
 
-from google.appengine.api import users
-import storage
-import flask
-
-from models import Image, Album, CoverImage, User
-from settings import init
-
 app = Flask(__name__)
+sslify = SSLify(app) #force HTTPS even when user requests HTTP
 init(app)
 
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
+blueprint = Blueprint('admin', __name__)
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
 def upload_file(file, album):
-    folder = "photography/" + album
+    folder = "albums/" + album + "/"
     img = None
     if album == "covers":
-        folder = "covers"
+        folder = "covers/"
     if allowed_file(file.filename):
-        saved_file_name = storage.upload_file_to_gcs(file, folder)
-        img = Image.new(url=saved_file_name, album=album, filename=file.filename)
+        saved_file_name = storage.upload_file(
+            file, folder, app.config['UPLOAD_BUCKET'], is_dev=app.config['IS_DEV'])
+        img = Image(url=saved_file_name, album=album)
+        img.put()
         flash('Uploaded photo to album %s' % album)
+        logging.info('Uploaded photo to album %s' % album)
     else:
         flash('File extension not supported')
+        logging.warning('File extension not supported for file %s' % file.filename)
         raise Exception("File extension not supported")
     return img
 
 
-@app.route('/admin/', methods=['POST', 'GET'])
+@blueprint.route('/admin/', methods=['POST', 'GET'])
+@login_required
 def admin():
-    user = User.get(users.get_current_user().email())
-
-    if not app.debug and (user is None or not user.admin):
-        return 'Only admins can access this site', 401
+    # users must be established as admins in Users database directly
+    if not current_user.admin:
+        logging.info("User %s not allowed to access admin page" % current_user.email)
+        return "User is not a site admin", 403
 
     albums = Album.active_albums()
 
@@ -62,33 +67,33 @@ def admin():
     if request.method == 'POST':
         if "create-album" in request.form:
             try:
-                album = request.form['album']
+                title = request.form['album']
                 location = request.form['location']
-                if len(album) > 1:
-                    new_album = Album.new(album, location)
+                path = request.form['path']
+                if len(title) > 1:
+                    new_album = Album(title, path, location=location)
+                    new_album.put()
                     context['albums'] = context['albums'] + [new_album]
-                    flash('New album %s created' % album)
+                    flash('New album %s created' % new_album)
+                    logging.info('New album %s created' % new_album)
             except Exception as e:
                 flash('Album creation failed: %s' % e)
+                logging.error('Album creation failed: %s' % e)
 
         if "upload-image" in request.form:
             try:
-                uploaded_files = flask.request.files.getlist("file")
+                uploaded_files = request.files.getlist("file")
                 for file in uploaded_files:
                     if 'cover_image' in request.form:
                         img = upload_file(file, "covers")
-                        CoverImage.new(img, request.form['album'])
+                        album = Album.get(request.form['album'])
+                        album.update_cover(img.url)
                     else:
                         upload_file(file, request.form['album'])
 
             except Exception as e:
                 flash('Image upload failed: %s' % e)
+                logging.error('Image upload failed: %s' % e)
 
     return render_template('admin.html', context=context)
 
-
-@app.errorhandler(500)
-def server_error(e):
-    logging.exception('An error has occurred')
-
-    return 'An error has occurred on the server', 500

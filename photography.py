@@ -1,34 +1,20 @@
-# Copyright (C) 2017 Kevin McKenzie.
-#
-# Code may not be copied, reused,  or modified in any way without written
-# consent from Kevin McKenzie.
+# Copyright (C) 2019 Kevin McKenzie.
 
 import logging
-import models
-from models import Album, CoverImage
+from models_fs import Album
+from flask import render_template, redirect, Blueprint
 
-from flask import (
-    Flask,
-    render_template,
-    flash,
-    redirect
-)
+blueprint = Blueprint('photography', __name__)
 
-import flask
-from settings import init
-
-app = Flask(__name__)
-init(app)
-
-@app.route('/photography/', defaults={'path': ''})
-@app.route('/photography/<path:path>')
-def index(path):
-
+@blueprint.route('/photography/', defaults={'path': ''})
+@blueprint.route('/photography/<path:path>')
+def photography(path):
     if len(path) > 0:
         album = Album.get(path)
         if album is None:
+            logging.warning('No photos for album page %s' % path)
             return redirect("./")
-        photos = Album.photos(album.title)
+        photos = album.photos()
         context = {
             'album': album,
             'photos': photos
@@ -37,7 +23,10 @@ def index(path):
         return render_template('album.html', context=context)
 
     albums = Album.active_albums()
+    albums = [] if albums is None else albums
 
+<<<<<<< HEAD
+=======
     album_list = []
 
     for album in albums:
@@ -46,18 +35,10 @@ def index(path):
             "cover_url": album.cover_image_url_cache
         }
         album_list.append(album_dict)
+>>>>>>> master
     context = {
-        'albums' : album_list
+        'albums': albums
     }
-
-    logging.info("context")
-    logging.info(str(context))
 
     return render_template('photography.html', context=context)
 
-
-@app.errorhandler(500)
-def server_error(e):
-    logging.exception('An error has occurred')
-
-    return 'An error has occurred on the server', 500

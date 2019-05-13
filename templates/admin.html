@@ -15,6 +15,13 @@
         <br>
         <div class="row">
             <div class="col-md-6">
+                Album Path
+                <input class="form-control" id="path" name="path" type="text" />
+            </div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col-md-6">
                 Album Location
                 <input class="form-control" id="location" name="location" type="text"/>
             </div>
@@ -41,7 +48,7 @@
                     <select name="album" placeholder="Album" class="form-control">
                         <option value="0">Album</option>
                         {% for album in context.albums %}
-                            <option value="{{album.title}}">{{ album.title }}</option>
+                            <option value="{{album.path}}">{{ album.title }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -61,6 +68,10 @@
         </div>
     </form>
 </div>
+
+<br><br>
+
+<a href="/logout">Logout</a>
 
 
 {% endblock %}

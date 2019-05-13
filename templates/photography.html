@@ -12,8 +12,18 @@
 
 <!-- Portfolio Section -->
 <div class="row">
+    <h2 class="page-header">Photography</h2>
+
     {% if context.albums is not none %}
         {% for album in context.albums %}
+<<<<<<< HEAD
+            <div class="col-md-4" style="height:320px; max-width: 420px; min-width: 325px">
+                <a href="./{{album.path}}">
+                    <img class="img-responsive img-hover" src="{{album.cover}}" alt="">
+                </a>
+                <div class="text-center small-gray">{{album.title}}</div>
+            </div>
+=======
         <div class="col-md-4 col-sm-6" style="height:320px;">
             <a href="{{album['album'].key.urlsafe()}}">
                 <img class="img-responsive img-hover" src="{{album['cover_url']}}=s1024" alt="">
@@ -21,11 +31,11 @@
             <div class="text-center small-gray">{{album['album'].title}}</div>
         </div>
 
+>>>>>>> master
         {% endfor %}
     {% else %}
         No album
     {% endif %}
-
 </div>
 
 
