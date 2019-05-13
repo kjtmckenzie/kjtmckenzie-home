@@ -18,7 +18,7 @@ from flask_login import (
 )
 
 app = Flask(__name__)
-sslify = SSLify(app) # force HTTPS even when user requests HTTP
+sslify = SSLify(app) #force HTTPS even when user requests HTTP
 init(app)
 
 blueprint = Blueprint('admin', __name__)
@@ -50,6 +50,7 @@ def upload_file(file, album):
 @blueprint.route('/admin/', methods=['POST', 'GET'])
 @login_required
 def admin():
+    # users must be established as admins in Users database directly
     if not current_user.admin:
         logging.info("User %s not allowed to access admin page" % current_user.email)
         return "User is not a site admin", 403
