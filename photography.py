@@ -25,17 +25,6 @@ def photography(path):
     albums = Album.active_albums()
     albums = [] if albums is None else albums
 
-<<<<<<< HEAD
-=======
-    album_list = []
-
-    for album in albums:
-        album_dict = {
-            "album": album,
-            "cover_url": album.cover_image_url_cache
-        }
-        album_list.append(album_dict)
->>>>>>> master
     context = {
         'albums': albums
     }
