@@ -62,6 +62,18 @@ def load_user(account_id):
 def authentication_required():
     return redirect(auth.url_for('widget', mode='select', next=request.url))
 
+<<<<<<< HEAD
+=======
+    for album in albums:
+        try:
+            album_dict = {
+                "album": album,
+                "cover_url": album.cover_image_url_cache
+            }
+            album_list.append(album_dict)
+        except:
+            logging.info("Invalid album: %s" % str(album))
+>>>>>>> master
 
 @app.route("/logout")
 @login_required
