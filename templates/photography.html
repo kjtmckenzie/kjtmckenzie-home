@@ -16,7 +16,7 @@
 
     {% if context.albums is not none %}
         {% for album in context.albums %}
-            <div class="col-md-4" style="height:320px; max-width: 420px; min-width: 325px">
+            <div class="image-container">
                 <a href="./{{album.path}}">
                     <img class="img-responsive img-hover" src="{{album.cover}}" alt="">
                 </a>

@@ -5,21 +5,25 @@
 
 <!-- Portfolio Section -->
 <div class="row">
-    <h2 class="page-header">Photography</h2>
+    <h2 class="page-header flexible-header">Photography</h2>
 
-    {% if context.albums is not none %}
-        {% for album in context.albums %}
-        <div class="col-md-4" style="height:320px; max-width: 420px; min-width: 325px">
-            <a href="photography/{{album.path}}">
-                <img class="img-responsive img-hover" src="{{album.cover}}" alt="">
-            </a>
-            <div class="text-center small-gray">{{album.title}}</div>
+        <div class="col-centered">
+
+        {% if context.albums is not none %}
+            {% for album in context.albums %}
+            <div class="image-container">
+                <a href="photography/{{album.path}}">
+                    <img class="img-responsive img-hover" src="{{album.cover}}" alt="">
+                </a>
+                <div class="text-center small-gray">{{album.title}}</div>
+            </div>
+
+            {% endfor %}
+        {% else %}
+            No album
+        {% endif %}
+
         </div>
-
-        {% endfor %}
-    {% else %}
-        No album
-    {% endif %}
 </div>
 
 <div class="row" id="projects">
