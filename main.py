@@ -75,6 +75,11 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
+
+@app.route('/static/<path:path>')
+def static_files(path):
+    return send_from_directory(os.path.join(app.root_path, 'static'), path)
+
 # used only in development, images normally served from GCS
 @app.route('/dev_uploads/<path:path>')
 def dev_uploads(path):
