@@ -25,7 +25,7 @@ local:
 app-engine-deploy: 
 	cd ~/personal/kjtmckenzie-home/ \
 	&& sed -i -e 's/#google-python-cloud-debugger/google-python-cloud-debugger/' requirements.txt \
-	&& gcloud app deploy \
+	&& gcloud app deploy app.yaml --promote --stop-previous-version \
 	&& sed -i -e 's/google-python-cloud-debugger/$(HASHMARK)google-python-cloud-debugger/' requirements.txt \
        && rm -rf requirements.txt-e
 
