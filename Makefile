@@ -49,7 +49,7 @@ docker-push:
 	docker push $(REGISTRY)/$(PROJECT):latest
 
 cloud-run-deploy:
-	gcloud beta run deploy --image $(REGISTRY)/$(PROJECT) --update-env-vars CLOUD_RUN=True
+	gcloud beta run deploy $(PROJECT) --image $(REGISTRY)/$(PROJECT) --update-env-vars CLOUD_RUN=True
 	
 
 

@@ -5,4 +5,4 @@ export DATASTORE_EMULATOR_HOST=localhost:8081
 
 
 # push to all
-# yes | make app-engine-deploy; make docker-build; make docker-push; yes kjtmckenzie-home-fs | make cloud-run-deploy
+# yes | make app-engine-deploy; make docker-build; make docker-push; make cloud-run-deploy
