@@ -3,6 +3,6 @@ gcloud beta emulators firestore start
 export FIRESTORE_EMULATOR_HOST=::1:8182
 export DATASTORE_EMULATOR_HOST=localhost:8081
 
-#TODO
-Image resizing cloud function?
 
+# push to all
+# yes | make app-engine-deploy; make docker-build; make docker-push; yes kjtmckenzie-home-fs | make cloud-run-deploy
