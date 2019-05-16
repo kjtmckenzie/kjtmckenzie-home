@@ -7,13 +7,8 @@
         <li><a href="../">Home</a></li>
         <li class="active">Photography</li>
     </ol>
-</div>
 
-
-<!-- Portfolio Section -->
-<div class="row">
-    <h2 class="page-header">Photography</h2>
-
+    <!-- Portfolio Section -->
     {% if context.albums is not none %}
         {% for album in context.albums %}
             <div class="image-container">
@@ -27,7 +22,6 @@
         No album
     {% endif %}
 </div>
-
 
 
 {% endblock %}
