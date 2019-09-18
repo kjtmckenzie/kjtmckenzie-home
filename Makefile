@@ -1,7 +1,7 @@
 # Where to push the docker image.
 REGISTRY ?= gcr.io/kjtmckenzie-home-fs
 PROJECT ?= kjtmckenzie-home-fs
-LOCAL_CREDENTIALS ?= `pwd`/kjtmckenzie-home-fs-e95cb6b832bf.json
+LOCAL_CREDENTIALS ?= `pwd`/`ls kjtmckenzie-home-fs-*`
 HASHMARK = \#
 PORT ?= 8080
 DEV_FLASK_SECRET ?= `cat dev_flask_secret.txt`
