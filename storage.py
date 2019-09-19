@@ -3,7 +3,6 @@
 from werkzeug.utils import secure_filename
 from google.cloud import storage
 import datetime
-import six
 import os
 
 from google.api_core.exceptions import NotFound
@@ -52,7 +51,7 @@ def upload_file(file, folder, upload_bucket, make_public=True, is_dev=False):
 
         url = blob.public_url
 
-    if isinstance(url, six.binary_type):
+    if type(url) is bytes:
         url = url.decode('utf-8')
 
     return url
