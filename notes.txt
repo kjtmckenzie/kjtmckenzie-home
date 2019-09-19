@@ -6,3 +6,8 @@ export DATASTORE_EMULATOR_HOST=localhost:8081
 
 # push to all
 # yes | make app-engine-deploy; make docker-build; make docker-push; make cloud-run-deploy
+
+
+# push tags
+git tag -a v0.2-prod -m "note about tag"
+git push --tags
