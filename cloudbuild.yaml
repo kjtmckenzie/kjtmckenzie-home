@@ -4,4 +4,4 @@ steps:
 - name: gcr.io/cloud-builders/docker
   args: ["push", "gcr.io/$PROJECT_ID/$PROJECT_ID:${SHORT_SHA}"]
 - name: 'gcr.io/cloud-builders/gcloud'
-  args: ['beta', 'run', 'deploy', '$PROJECT_ID', '--image', 'gcr.io/$PROJECT_ID/$PROJECT_ID:${SHORT_SHA}', '--region', 'us-central1', '--update-env-vars', 'CLOUD_RUN=True']
+  args: ['beta', 'run', 'deploy', '$PROJECT_ID', '--image', 'gcr.io/$PROJECT_ID/$PROJECT_ID:${SHORT_SHA}', '--platform', 'managed', '--region', 'us-central1', '--update-env-vars', 'CLOUD_RUN=True']
