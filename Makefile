@@ -49,7 +49,8 @@ docker-push:
 	docker push $(REGISTRY)/$(PROJECT):latest
 
 cloud-run-deploy:
-	gcloud beta run deploy $(PROJECT) --image $(REGISTRY)/$(PROJECT) --platform managed --region us-central1 --update-env-vars CLOUD_RUN=True
+	gcloud config set project $(PROJECT) \
+	&& gcloud beta run deploy $(PROJECT) --image $(REGISTRY)/$(PROJECT) --platform managed --region us-central1 --update-env-vars CLOUD_RUN=True
 	
 
 
