@@ -58,14 +58,15 @@ def get_active_albums():
 
 @retry(wait_exponential_multiplier=100, wait_exponential_max=2000, retry_on_exception=retry_if_service_unavailable_error)
 def get_album(path):
-    album = next(db.collection('Albums').where('path', '==', path).get(), None)
-    if album:
-        album = album.to_dict()
-    return album
+    album = db.collection('Albums').where('path', '==', path).get()
+    if not album or len(album) == 0:
+        return None
+    return album[0].to_dict()
 
 
 @retry(wait_exponential_multiplier=100, wait_exponential_max=2000, retry_on_exception=retry_if_service_unavailable_error)
 def get_album_images(path):
+    logging.warning('getting album images for path %s' % path)
     image_gen = db.collection('Images').where('album', '==', path).order_by('url').get()
     images = []
     for image in image_gen:
