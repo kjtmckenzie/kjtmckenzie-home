@@ -2,4 +2,4 @@ google-cloud-storage==1.13.2
 Wand==0.5.0
 google-cloud-firestore==0.31.0
 retrying
-grpcio==1.18.0
+grpcio==1.53.0
