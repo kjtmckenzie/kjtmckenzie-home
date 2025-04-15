@@ -94,6 +94,9 @@ def dev_uploads(path):
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
+    if path != '':
+        logging.exception('Page not found')
+        return 'Page not found', 404
     albums = Album.active_albums()
     context = {'albums': [] if albums is None else albums}
     return render_template('index.html', context=context)
