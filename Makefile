@@ -2,6 +2,7 @@
 REGISTRY ?= gcr.io/kjtmckenzie-home-fs
 PROJECT ?= kjtmckenzie-home-fs
 LOCAL_CREDENTIALS ?= `pwd`/`ls kjtmckenzie-home-fs-*`
+ARTIFACT_REGION ?= us-docker.pkg.dev
 HASHMARK = \#
 PORT ?= 8080
 DEV_FLASK_SECRET ?= `cat dev_flask_secret.txt`
@@ -31,7 +32,7 @@ app-engine-deploy:
 
 docker-build:
 	cd ~/personal/kjtmckenzie-home/ \
-	&& docker build -t $(REGISTRY)/$(PROJECT):latest .  
+	&& docker build -t $(REGISTRY)/$(PROJECT):latest --platform linux/amd64 .  
 
 docker-run:
 	cd ~/personal/kjtmckenzie-home/ \
@@ -46,11 +47,12 @@ docker-run:
 		$(REGISTRY)/$(PROJECT)
 
 docker-push:
-	docker push $(REGISTRY)/$(PROJECT):latest
+	docker tag $(REGISTRY)/$(PROJECT) $(ARTIFACT_REGION)/$(PROJECT)/$(REGISTRY):latest\
+	&& docker push $(ARTIFACT_REGION)/$(PROJECT)/$(REGISTRY):latest
 
 cloud-run-deploy:
 	gcloud config set project $(PROJECT) \
-	&& gcloud beta run deploy $(PROJECT) --image $(REGISTRY)/$(PROJECT) --platform managed --region us-central1 --update-env-vars CLOUD_RUN=True
+	&& gcloud run deploy $(PROJECT) --image $(REGISTRY)/$(PROJECT) --platform managed --region us-central1 --update-env-vars CLOUD_RUN=True
 	
 
 
